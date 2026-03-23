@@ -985,6 +985,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Menu",
+                    "type": "Button",
+                    "id": "16287f8c-d24f-47c0-9ae0-aaac8a386697",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1304,6 +1313,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Reset Pos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3dcc7d8c-f991-4dab-ad73-ec64fa171bd9",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
