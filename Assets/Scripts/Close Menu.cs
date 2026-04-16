@@ -6,6 +6,6 @@ public class CloseMenu : MonoBehaviour
 
     public void Close()
     {
-        menu.SetActive(!menu.activeSelf);
+        menu.SetActive(!menu.activeSelf); // sets the menu to the opposite of its current state
     }
 }

@@ -30,8 +30,8 @@ public class SliderInteraction : MonoBehaviour
     private float jumpDefault = 1f;
 
     public void MovementSpeed(float value) {
-        moveProvider.moveSpeed = value;
-        moveText.text = value.ToString("0");
+        moveProvider.moveSpeed = value; // Set the move speed of the provider to the value from the slider
+        moveText.text = value.ToString("0"); // Update the text to show the current value of the slider, formatted to 0 decimal places
     }
 
     public void RotationSpeed(float value) {

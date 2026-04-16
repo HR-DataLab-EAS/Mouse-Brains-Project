@@ -33,11 +33,11 @@ Preset:
     value: 
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: mathMenu
+    propertyPath: analyseMenu
     value: 
     objectReference: {fileID: 0}
   - target: {fileID: 0}
-    propertyPath: saveMenu
+    propertyPath: exportMenu
     value: 
     objectReference: {fileID: 0}
   - target: {fileID: 0}

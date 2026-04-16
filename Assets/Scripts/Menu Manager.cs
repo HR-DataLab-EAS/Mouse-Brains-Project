@@ -6,8 +6,8 @@ public class MenuManager : MonoBehaviour
 
     public GameObject mainMenu;
     public GameObject importMenu;
-    public GameObject mathMenu;
-    public GameObject saveMenu;
+    public GameObject analyseMenu;
+    public GameObject exportMenu;
     public GameObject settingsMenu;
 
     public InputActionReference toggleMenuAction;
@@ -17,8 +17,8 @@ public class MenuManager : MonoBehaviour
         if (toggleMenuAction.action.WasPressedThisFrame())
         {
             importMenu.SetActive(false);
-            mathMenu.SetActive(false);
-            saveMenu.SetActive(false);
+            analyseMenu.SetActive(false);
+            exportMenu.SetActive(false);
             settingsMenu.SetActive(false);
 
             mainMenu.SetActive(!mainMenu.activeSelf);
@@ -31,16 +31,16 @@ public class MenuManager : MonoBehaviour
         importMenu.SetActive(true);
     }
 
-    public void OpenMathMenu()
+    public void OpenAnalyseMenu()
     {
         mainMenu.SetActive(false);
-        mathMenu.SetActive(true);
+        analyseMenu.SetActive(true);
     }
 
-    public void OpenSaveMenu()
+    public void OpenExportMenu()
     {
         mainMenu.SetActive(false);
-        saveMenu.SetActive(true);
+        exportMenu.SetActive(true);
     }
 
     public void OpenSettingsMenu()
