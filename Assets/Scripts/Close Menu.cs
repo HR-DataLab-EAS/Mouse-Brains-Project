@@ -1,11 +1,15 @@
 using UnityEngine;
 
-public class CloseMenu : MonoBehaviour
+namespace MenuNamespace.Close
 {
-    public GameObject menu;
-
-    public void Close()
+    public class CloseMenu : MonoBehaviour
     {
-        menu.SetActive(!menu.activeSelf); // sets the menu to the opposite of its current state
+        [Header("Menu Reference")]
+        public GameObject menu;
+
+        public void Close()
+        {
+            menu.SetActive(!menu.activeSelf); // Toggles the menu's active state
+        }
     }
 }
