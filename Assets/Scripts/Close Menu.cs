@@ -5,7 +5,7 @@ namespace MenuNamespace.Close
     public class CloseMenu : MonoBehaviour
     {
         [Header("Menu Reference")]
-        public GameObject menu;
+        public GameObject menu; // Reference to the menu GameObject that will be toggled on and off
 
         public void Close()
         {

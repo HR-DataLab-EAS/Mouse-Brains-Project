@@ -9,6 +9,7 @@ namespace MenuNamespace.Prefab
         [Header("References")] // references to the file browser and data holder for the loaded prefab
         public VRFileBrowser fileBrowser;
         public Transform dataHolder;
+        public GameObject myObject;
 
         [Header("Placement (local, inside Data Holder)")] // options for how to position, rotate, and scale the loaded prefab relative to the data holder
         public bool keepPrefabTransform = true;
@@ -66,10 +67,12 @@ namespace MenuNamespace.Prefab
                 loadedInstance.transform.localEulerAngles = localRotation;
                 loadedInstance.transform.localScale = localScale;
             }
+            myObject.SetActive(false);
         }
 
         private static string GetUserPrefabsPath()
         {
+            // the # makes the code compile before anything else when loading the scene
             #if UNITY_EDITOR // the code checks if it's running in the Unity Editor or in a aplication. And then it goes to the required path for the prefabs
                 return Path.Combine(Application.dataPath, "Resources", ResourcesSubfolder);
             #else

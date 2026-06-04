@@ -16,11 +16,11 @@ namespace MenuNamespace.GLB
         public Vector3 localRotation = Vector3.zero; // Local rotation (in Euler angles) for the loaded model relative to the data holder
         public Vector3 localScale = Vector3.one; // Local scale for the loaded model relative to the data holder
 
-        private GameObject loadedModel;
+        public GameObject loadedModel;
 
         public void OpenFileBrowser() // Method to open the file browser
         {
-            // 
+            // Reopen the file browser to make sure it doesnt double open
             fileBrowser.OnFileConfirmed -= OnFileConfirmed;
             fileBrowser.OnFileConfirmed += OnFileConfirmed;
 

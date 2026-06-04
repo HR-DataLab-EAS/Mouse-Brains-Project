@@ -18,8 +18,8 @@ public class VRFileBrowser : MonoBehaviour
     public Button closeButton;
     public TMP_Text statusText;
 
-    [Header("File Filter (overridden at runtime by loaders)")]
-    public string[] allowedExtensions = { ".glb", ".gltf", ".prefab" }; // Allowed extensions the user can select
+    // change back to public if code is broken
+    private string[] allowedExtensions = { ".glb", ".gltf", ".prefab" }; // Allowed extensions the user can select
 
     [Header("Colors")] // Colors for UI elements
     public Color colorDrive = new Color(0.80f, 0.70f, 1.00f);
