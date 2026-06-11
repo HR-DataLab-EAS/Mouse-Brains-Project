@@ -5370,6 +5370,10 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7462879561657043759, guid: ad818c36731146e994540a1896ad8f24, type: 3}
+      propertyPath: m_MaxRaycastDistance
+      value: 999
+      objectReference: {fileID: 0}
+    - target: {fileID: 7462879561657043759, guid: ad818c36731146e994540a1896ad8f24, type: 3}
       propertyPath: m_InteractionLayers.m_Bits
       value: 3
       objectReference: {fileID: 0}
@@ -22737,9 +22741,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Test Data
       objectReference: {fileID: 0}
+    - target: {fileID: 3137418916514665397, guid: 2f3c906047ef8e745a68356da2991a64, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8973455140413817761, guid: 2f3c906047ef8e745a68356da2991a64, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.96943
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8973455140413817761, guid: 2f3c906047ef8e745a68356da2991a64, type: 3}
       propertyPath: m_LocalPosition.y
@@ -22747,7 +22755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8973455140413817761, guid: 2f3c906047ef8e745a68356da2991a64, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.49181
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8973455140413817761, guid: 2f3c906047ef8e745a68356da2991a64, type: 3}
       propertyPath: m_LocalRotation.w

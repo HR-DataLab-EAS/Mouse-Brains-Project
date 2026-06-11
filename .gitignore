@@ -26,3 +26,9 @@
 # Crash and debug
 sysinfo.txt
 *.stacktrace
+
+# Block local IDE configurations
+.vs/
+.vscode/
+.vsconfig
+*.slnx
