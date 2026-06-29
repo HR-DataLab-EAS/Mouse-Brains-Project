@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 using MenuNamespace.Manager;
 
@@ -6,29 +6,37 @@ namespace MenuNamespace.Prefab
 {
     public class PrefabLoader : MonoBehaviour
     {
-        [Header("References")] // references to the file browser and data holder for the loaded prefab
+        [Header("References")]
         public VRFileBrowser fileBrowser;
         public Transform dataHolder;
         public GameObject myObject;
 
-        [Header("Placement (local, inside Data Holder)")] // options for how to position, rotate, and scale the loaded prefab relative to the data holder
+        [Header("Placement (local, inside Data Holder)")]
         public bool keepPrefabTransform = true;
         public Vector3 localPosition = Vector3.zero;
         public Vector3 localRotation = Vector3.zero;
         public Vector3 localScale = Vector3.one;
 
-        [Header("Behaviour")]
-        public bool replaceExisting = true; // If true, loading a new prefab will replace the previously loaded one. If false, multiple prefabs can be loaded without replacing each other.
+        public bool replaceExisting = true;
 
-        private const string ResourcesSubfolder = "UserPrefabs"; // The name of the subfolder within the Resources folder where user prefabs are stored.
-        private GameObject loadedInstance; 
+        private const string ResourcesSubfolder = "UserPrefabs";
+        private DataHolderManager _dataHolderManager;
 
-        private void OnDestroy() // Unsubscribe from the file confirmed event when this object is destroyed
+        private void Start()
+        {
+            if (dataHolder != null)
+                _dataHolderManager = dataHolder.GetComponent<DataHolderManager>();
+
+            if (_dataHolderManager == null)
+                Debug.LogWarning("[PrefabLoader] No DataHolderManager found on Data Holder.");
+        }
+
+        private void OnDestroy()
         {
             fileBrowser.OnFileConfirmed -= OnFileConfirmed;
         }
 
-        public void OpenFileBrowser() // Refer to GLB Loader (same method)
+        public void OpenFileBrowser()
         {
             string prefabPath = GetUserPrefabsPath();
 
@@ -49,35 +57,39 @@ namespace MenuNamespace.Prefab
             string resourcePath = ResourcesSubfolder + "/" + prefabName;
             GameObject prefab = Resources.Load<GameObject>(resourcePath);
 
-            if (replaceExisting && loadedInstance != null) // Remove the old prefab under the specified conditions
+            if (prefab == null)
             {
-                Destroy(loadedInstance);
-                loadedInstance = null;
+                Debug.LogError($"[PrefabLoader] Could not load '{resourcePath}' from Resources.");
+                return;
             }
 
-            loadedInstance = Instantiate(prefab); // Instantiate the loaded prefab and keep a reference to the instance
-            loadedInstance.name = prefabName; // Set the name of the loaded instance to the prefabs name
+            // Clear whatever is loaded — GLB or prefab
+            _dataHolderManager?.ClearLoaded();
 
-            loadedInstance.transform.SetParent(dataHolder, false); // Set the parent of the loaded instance to the data holder without changing its local transform
+            GameObject instance = Instantiate(prefab);
+            instance.name = prefabName;
+            instance.transform.SetParent(dataHolder, false);
 
-            if (keepPrefabTransform != true)
+            if (!keepPrefabTransform)
             {
-                // Use the manual transform instead of the prefab's original transform
-                loadedInstance.transform.localPosition = localPosition;
-                loadedInstance.transform.localEulerAngles = localRotation;
-                loadedInstance.transform.localScale = localScale;
+                instance.transform.localPosition = localPosition;
+                instance.transform.localEulerAngles = localRotation;
+                instance.transform.localScale = localScale;
             }
+
+            _dataHolderManager?.RegisterLoaded(instance);
+            Debug.Log("[PrefabLoader] ✅ Spawned: " + prefabName);
+
             myObject.SetActive(false);
         }
 
         private static string GetUserPrefabsPath()
         {
-            // the # makes the code compile before anything else when loading the scene
-            #if UNITY_EDITOR // the code checks if it's running in the Unity Editor or in a aplication. And then it goes to the required path for the prefabs
+#if UNITY_EDITOR
                 return Path.Combine(Application.dataPath, "Resources", ResourcesSubfolder);
-            #else
-                return Path.Combine(Path.GetDirectoryName(Application.dataPath), ResourcesSubfolder);
-            #endif
+#else
+            return Path.Combine(Path.GetDirectoryName(Application.dataPath), ResourcesSubfolder);
+#endif
         }
     }
 }

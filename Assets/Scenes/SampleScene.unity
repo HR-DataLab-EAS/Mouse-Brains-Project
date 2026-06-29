@@ -1997,8 +1997,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 222124624}
-        m_TargetAssemblyTypeName: Resets.User.ResetUserPosition, Assembly-CSharp
-        m_MethodName: Resetuser
+        m_TargetAssemblyTypeName: ResetUserPosition, Assembly-CSharp
+        m_MethodName: ResetPlayer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2063,6 +2063,8 @@ MonoBehaviour:
   targetHeadPosition: {x: 0, y: 0, z: -3}
   targetYRotation: 0
   resetRotation: 1
+  resetOnLoad: 1
+  resetDelay: 0.5
 --- !u!1 &227497836
 GameObject:
   m_ObjectHideFlags: 0
@@ -9811,7 +9813,7 @@ Transform:
   m_GameObject: {fileID: 918798785}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.96943, y: 0, z: -3.49181}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10205,6 +10207,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 944371525}
+  - component: {fileID: 944371526}
   m_Layer: 0
   m_Name: Data Holder
   m_TagString: Untagged
@@ -10227,6 +10230,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &944371526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944371524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15603c894c2e1f9448697be85ae52e04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataHolderManager
 --- !u!1 &949530779
 GameObject:
   m_ObjectHideFlags: 0
@@ -12072,7 +12087,6 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0.01, y: 0.01, z: 0.01}
-  loadedModel: {fileID: 0}
 --- !u!4 &1172625457
 Transform:
   m_ObjectHideFlags: 0
@@ -14093,8 +14107,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1320235201}
-        m_TargetAssemblyTypeName: ResetPosition, Assembly-CSharp
-        m_MethodName: Reset
+        m_TargetAssemblyTypeName: Resets.Data.ResetDataPosition, Assembly-CSharp
+        m_MethodName: ResetData
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14154,7 +14168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b6b3fd5848d3704a82c2a96d90e4a8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResetUserPosition
-  objectToReset: {fileID: 1335266624495070665}
+  objectToReset: {fileID: 944371524}
   targetPosition: {x: 0, y: 0, z: 0}
   targetRotation: {x: 0, y: 0, z: 0}
 --- !u!1 &1321155665
@@ -22739,7 +22753,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3137418916514665397, guid: 2f3c906047ef8e745a68356da2991a64, type: 3}
       propertyPath: m_Name
-      value: Test Data
+      value: DeepD3 Data
       objectReference: {fileID: 0}
     - target: {fileID: 3137418916514665397, guid: 2f3c906047ef8e745a68356da2991a64, type: 3}
       propertyPath: m_IsActive

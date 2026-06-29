@@ -1,3 +1,4 @@
+﻿using System;
 using System.IO;
 using UnityEngine;
 using GLTFast;
@@ -8,65 +9,79 @@ namespace MenuNamespace.GLB
     public class GLBLoader : MonoBehaviour
     {
         [Header("References")]
-        public VRFileBrowser fileBrowser; // Reference to the VR file browser UI
-        public Transform dataHolder; // The parent transform under which the loaded model will be placed
+        public VRFileBrowser fileBrowser;
+        public Transform dataHolder;
 
         [Header("Placement (local, inside Data Holder)")]
-        public Vector3 localPosition = Vector3.zero; // Local position for the loaded model relative to the data holder
-        public Vector3 localRotation = Vector3.zero; // Local rotation (in Euler angles) for the loaded model relative to the data holder
-        public Vector3 localScale = Vector3.one; // Local scale for the loaded model relative to the data holder
+        public Vector3 localPosition = Vector3.zero;
+        public Vector3 localRotation = Vector3.zero;
+        public Vector3 localScale = Vector3.one;
 
-        public GameObject loadedModel;
+        private DataHolderManager _dataHolderManager;
 
-        public void OpenFileBrowser() // Method to open the file browser
+        private void Start()
         {
-            // Reopen the file browser to make sure it doesnt double open
+            if (dataHolder != null)
+                _dataHolderManager = dataHolder.GetComponent<DataHolderManager>();
+
+            if (_dataHolderManager == null)
+                Debug.LogWarning("[GLBLoader] No DataHolderManager found on Data Holder.");
+        }
+
+        public void OpenFileBrowser()
+        {
             fileBrowser.OnFileConfirmed -= OnFileConfirmed;
             fileBrowser.OnFileConfirmed += OnFileConfirmed;
 
-            fileBrowser.SetExtensionFilter(new string[] { ".glb", ".gltf" }); // Set the file extension filter to show only GLB and GLTF files
+            fileBrowser.SetExtensionFilter(new string[] { ".glb", ".gltf" });
 
-            FindAnyObjectByType<MenuManager>().OpenFileBrowser(); // Open the file browser through the menu manager script
-            fileBrowser.Open(); // Ensures the file browser opens
+            FindAnyObjectByType<MenuManager>().OpenFileBrowser();
+
+            // Open directly in Downloads/UserDownloads, fall back to Downloads if it doesn't exist
+            string downloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            string userDownloads = Path.Combine(downloads, "UserDownloads");
+            string startPath = Directory.Exists(userDownloads) ? userDownloads : downloads;
+
+            fileBrowser.Open(startPath);
         }
 
         private void OnDestroy()
         {
-            fileBrowser.OnFileConfirmed -= OnFileConfirmed; // Unsubscribe from the file confirmed event when this object is destroyed
+            fileBrowser.OnFileConfirmed -= OnFileConfirmed;
         }
 
-        private void OnFileConfirmed(string path) // Method called when a file is confirmed in the file browser, with the file path as an argument
+        private void OnFileConfirmed(string path)
         {
-            fileBrowser.OnFileConfirmed -= OnFileConfirmed; // Unsubscribe from the event to prevent multiple calls
-            LoadGLBAsync(path); // Start loading the GLB file asynchronously
+            fileBrowser.OnFileConfirmed -= OnFileConfirmed;
+            LoadGLBAsync(path);
         }
 
-        private async void LoadGLBAsync(string path) // Asynchronous method to load the GLB file
+        private async void LoadGLBAsync(string path)
         {
-            Destroy(loadedModel); // Destroy the previously loaded model if it exists
-            loadedModel = null;
-            
-            string modelName = Path.GetFileNameWithoutExtension(path); // Get the file name without extension to use as the model's name
-            GameObject container = new GameObject(modelName); // Create a new empty GameObject to serve as the container for the loaded model
+            // Clear whatever is loaded — GLB or prefab
+            _dataHolderManager?.ClearLoaded();
 
-            container.transform.SetParent(dataHolder, false); // Set the container's parent to the data holder without changing its local transform
+            string modelName = Path.GetFileNameWithoutExtension(path);
+            GameObject container = new GameObject(modelName);
 
-            // Set the container's local position, rotation, and scale based on the specified values
+            container.transform.SetParent(dataHolder, false);
             container.transform.localPosition = localPosition;
             container.transform.localEulerAngles = localRotation;
             container.transform.localScale = localScale;
 
-            var gltf = new GltfImport(); // Create a new instance of the GLTF importer unity package
-            string uri = "file:///" + path.Replace("\\", "/"); // Create the URI for the GLB file
-            bool success = await gltf.Load(uri); // Load the GLB file asynchronously and wait for the result (success or failure)
+            var gltf = new GltfImport();
+            string uri = "file:///" + path.Replace("\\", "/");
+            bool success = await gltf.Load(uri);
 
-            if (success) // If the GLB file was loaded successfully, instantiate the main scene of the GLB model as a child of the container GameObject
+            if (success)
             {
                 await gltf.InstantiateMainSceneAsync(container.transform);
-                loadedModel = container;
+                _dataHolderManager?.RegisterLoaded(container);
+                Debug.Log("[GLBLoader] ✅ Loaded: " + modelName);
             }
-            else // If there was an error loading the GLB file, destroy the container GameObject
+            else
             {
+                Debug.LogError("[GLBLoader] ❌ Failed to load: " + path);
                 Destroy(container);
             }
         }

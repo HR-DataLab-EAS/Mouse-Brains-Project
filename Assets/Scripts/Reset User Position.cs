@@ -1,54 +1,112 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Unity.XR.CoreUtils;
-using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
+using System.Collections;
 
-namespace Resets.User
+/// <summary>
+/// ResetUserPosition — Resets the VR player to a target position and forward-facing rotation.
+/// Can be called from a UI button, and optionally runs automatically on scene load
+/// after a short delay to let headset tracking settle.
+/// </summary>
+public class ResetUserPosition : MonoBehaviour
 {
-    public class ResetUserPosition : MonoBehaviour
+    [Header("XR References")]
+    [Tooltip("Your scene's XR Origin GameObject.")]
+    [SerializeField] private XROrigin xrOrigin;
+
+    [Tooltip("The Main Camera (inside XR Origin > Camera Offset > Main Camera).")]
+    [SerializeField] private Transform cameraTransform;
+
+    [Header("Target")]
+    [Tooltip("Where the player's HEAD should end up (world position).")]
+    [SerializeField] private Vector3 targetHeadPosition = new Vector3(0f, 0f, 0f);
+
+    [Tooltip("Which direction the player should face after reset. 0 = forward along +Z.")]
+    [SerializeField] private float targetYRotation = 0f;
+
+    [Tooltip("If false, only resets position but leaves the player facing whatever direction they were.")]
+    [SerializeField] private bool resetRotation = true;
+
+    [Header("On Load")]
+    [Tooltip("Automatically reset the player when the scene loads.")]
+    [SerializeField] private bool resetOnLoad = true;
+
+    [Tooltip("Seconds to wait after load before resetting. " +
+             "0.5–1s lets the headset tracking settle so the offset is read correctly.")]
+    [SerializeField] private float resetDelay = 0.5f;
+
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void Start()
     {
-        [Header("References")] // References to the VR rig and camera
-        public XROrigin xrOrigin;
-        public Transform cameraTransform;
+        if (xrOrigin == null)
+            xrOrigin = FindObjectOfType<XROrigin>();
 
-        [Header("Target Position/Rotation")] // References for the target position and rotation to reset to
-        public Vector3 targetHeadPosition = new Vector3(0f, 0f, 0f);
-        public float targetYRotation = 0f;
-        public bool resetRotation = true;
-
-        public void Resetuser() // Method to reset the user's position and rotation
+        if (xrOrigin == null)
         {
-            if (resetRotation)
-            {
-                AlignRotation();
-            }
-
-            AlignPosition();
+            Debug.LogError("[ResetUserPosition] No XROrigin found. Please assign it.");
+            return;
         }
 
-        public void AlignRotation() // Method to align the user's rotation with the target rotation
+        if (cameraTransform == null)
+            cameraTransform = xrOrigin.Camera?.transform;
+
+        if (cameraTransform == null)
         {
-            Transform originTransform = xrOrigin.transform; // Save a reference to the XR Origin's transform
-
-            float currentCameraYaw = cameraTransform.eulerAngles.y; // Get the current yaw rotation of the camera (the horizontal rotation around the Y axis)
-            float yawDelta = targetYRotation - currentCameraYaw; // Calculate the difference between the target yaw and the current camera yaw
-
-            // Rotate the XR Origin around the camera's position by the calculated yaw delta
-            originTransform.RotateAround
-            (
-                new Vector3(cameraTransform.position.x, originTransform.position.y, cameraTransform.position.z), // Rotate around the camera's x and z, but keep the y position of the XR Origin
-                Vector3.up, // Rotate around the Y axis
-                yawDelta // Rotate by the calculated yaw delta to align the camera's yaw with the target yaw
-            );
+            Debug.LogError("[ResetUserPosition] No camera found on XROrigin. Please assign cameraTransform.");
+            return;
         }
 
-        public void AlignPosition() // Method to align the user's position with the target position
-        {
-            Transform originTransform = xrOrigin.transform; // Save a reference to the XR Origin's transform
-            Vector3 currentHeadPos = cameraTransform.position; // Get the current position of the camera
-            Vector3 delta = targetHeadPosition - currentHeadPos; // Calculate the difference between the target head position and the current camera position
+        if (resetOnLoad)
+            StartCoroutine(ResetAfterDelay());
+    }
 
-            delta.y = targetHeadPosition.y - currentHeadPos.y; // Only consider the vertical difference for the Y axis
-            originTransform.position += delta; // Move the XR Origin by the calculated delta to align the camera's position with the target head position
+    private IEnumerator ResetAfterDelay()
+    {
+        // Wait for tracking to settle before reading the camera offset
+        yield return new WaitForSeconds(resetDelay);
+        ResetPlayer();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Resets the player's head to targetHeadPosition facing targetYRotation.
+    /// Call this from your UI button's OnClick.
+    /// </summary>
+    public void ResetPlayer()
+    {
+        if (xrOrigin == null || cameraTransform == null)
+        {
+            Debug.LogError("[ResetUserPosition] Missing references — cannot reset.");
+            return;
         }
+
+        if (resetRotation)
+            AlignRotation();
+
+        AlignPosition();
+
+        Debug.Log("[ResetUserPosition] Player reset to " + targetHeadPosition);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void AlignRotation()
+    {
+        Transform originTransform = xrOrigin.transform;
+        float currentCameraYaw = cameraTransform.eulerAngles.y;
+        float yawDelta = targetYRotation - currentCameraYaw;
+
+        originTransform.RotateAround(
+            new Vector3(cameraTransform.position.x, originTransform.position.y, cameraTransform.position.z),
+            Vector3.up,
+            yawDelta
+        );
+    }
+
+    private void AlignPosition()
+    {
+        Vector3 delta = targetHeadPosition - cameraTransform.position;
+        xrOrigin.transform.position += delta;
     }
 }
